@@ -1,0 +1,72 @@
+{
+    "nbformat":4,
+    "nbformat_minor":5,
+    "metadata":{
+            "darwin":{
+                "workbook":{
+                    "state":{
+                        "query":{
+                            "value":"select * from table",
+                            "type":"presto",
+                            "row_limit":"100",
+                            "metadata":{
+                                "connections":{
+                                    "presto":{
+                                        "endpoint":"Faro",
+                                        "active":true
+                                    }
+                                }
+                            }
+                        },
+                        "outputs":[]
+                    }
+                },
+                "resource_id":89125
+            },
+            "kernelspec":{
+                "display_name":"Python 3",
+                "language":"python",
+                "name":"python3"
+            }
+        },
+    "cells":[
+        {
+            "cell_type":"code",
+            "execution_count":null,
+            "metadata":{
+                "cell_type":"prestoConnection"
+            },
+            "source":"%reload_ext linkedin.lisql\n%config SqlMagic.autocommit=False\n%manage_presto Faro",
+            "outputs":[]
+        },
+        {
+            "cell_type":"code",
+            "execution_count":null,
+            "metadata":{
+                "cell_type":"prestoLimit"
+            },
+            "source":"%config SqlMagic.autolimit=100",
+            "outputs":[]
+        },
+        {
+            "id":"66401d4c-431d-4a18-bb72-0ac5f467ce16",
+            "cell_type":"code",
+            "execution_count":null,
+            "metadata":{
+                "cell_type":"grid"
+            },
+            "source":"%%sql --outputtype json --numrows 200 \nselect *\nfrom ei_tracking.pageviewevent",
+            "outputs":[]
+        },
+        {
+            "id":"28768127-9f25-49a8-806e-08cbc8f63976",
+            "cell_type":"code",
+            "execution_count":null,
+            "metadata":{
+                "cell_type":"pivot"
+            },
+            "source":"%pivot --command execute --pivotconfig {\"index\":[\"pagetype\"],\"columns\":[\"datepartition\"],\"values\":[\"totaltime\"],\"aggfunc\":[\"mean\",\"min\",\"max\"]} --numrows 200",
+            "outputs":[]
+        }
+    ]
+}
