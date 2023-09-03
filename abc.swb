@@ -1,72 +1,85 @@
 {
-    "nbformat":4,
-    "nbformat_minor":5,
-    "metadata":{
-            "darwin":{
-                "workbook":{
-                    "state":{
-                        "query":{
-                            "value":"select * from table",
-                            "type":"presto",
-                            "row_limit":"100",
-                            "metadata":{
-                                "connections":{
-                                    "presto":{
-                                        "endpoint":"Faro",
-                                        "active":true
-                                    }
-                                }
-                            }
-                        },
-                        "outputs":[]
-                    }
-                },
-                "resource_id":89125
-            },
-            "kernelspec":{
-                "display_name":"Python 3",
-                "language":"python",
-                "name":"python3"
+  "metadata": {
+    "darwin": {
+      "workbook": {
+        "state": {
+          "query": {
+            "value": "SELECT count(*) FROM service.dsplatformtrackevent WHERE endtime > to_unixtime(cast((current_date - interval '1' month) as date)) * 1000 and resourcerequested='/queryhistory' and requestmethod='create';",
+            "type": "trino",
+            "isExplainMode": false,
+            "row_limit": "1k",
+            "metadata": {
+              "connections": {
+                "trino": {
+                  "endpoint": "Holdem",
+                  "active": false
+                }
+              }
             }
-        },
-    "cells":[
-        {
-            "cell_type":"code",
-            "execution_count":null,
-            "metadata":{
-                "cell_type":"prestoConnection"
-            },
-            "source":"%reload_ext linkedin.lisql\n%config SqlMagic.autocommit=False\n%manage_presto Faro",
-            "outputs":[]
-        },
-        {
-            "cell_type":"code",
-            "execution_count":null,
-            "metadata":{
-                "cell_type":"prestoLimit"
-            },
-            "source":"%config SqlMagic.autolimit=100",
-            "outputs":[]
-        },
-        {
-            "id":"66401d4c-431d-4a18-bb72-0ac5f467ce16",
-            "cell_type":"code",
-            "execution_count":null,
-            "metadata":{
-                "cell_type":"grid"
-            },
-            "source":"%%sql --outputtype json --numrows 200 \nselect *\nfrom ei_tracking.pageviewevent",
-            "outputs":[]
-        },
-        {
-            "id":"28768127-9f25-49a8-806e-08cbc8f63976",
-            "cell_type":"code",
-            "execution_count":null,
-            "metadata":{
-                "cell_type":"pivot"
-            },
-            "source":"%pivot --command execute --pivotconfig {\"index\":[\"pagetype\"],\"columns\":[\"datepartition\"],\"values\":[\"totaltime\"],\"aggfunc\":[\"mean\",\"min\",\"max\"]} --numrows 200",
-            "outputs":[]
+          },
+          "outputs": [
+            {
+              "mode": "grid",
+              "grid": {},
+              "pivot": {}
+            }
+          ]
         }
-    ]
+      },
+      "resource_id": 6892681,
+      "username": "apanth"
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": ""
+    }
+  },
+  "nbformat_minor": 5,
+  "nbformat": 4,
+  "cells": [
+    {
+      "id": "b51820da-0f6d-4c46-b380-0e1338f700ef",
+      "cell_type": "raw",
+      "metadata": {
+        "cell_type": "swb_editor",
+        "cellId": "b51820da-0f6d-4c46-b380-0e1338f700ef",
+        "hidden": true
+      },
+      "source": "SELECT count(*) FROM service.dsplatformtrackevent WHERE endtime > to_unixtime(cast((current_date - interval '1' month) as date)) * 1000 and resourcerequested='/queryhistory' and requestmethod='create';"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cell_type": "default_magics",
+        "hidden": true,
+        "extensions": {
+          "jupyter_dashboards": {
+            "activeView": "grid_default",
+            "views": {
+              "grid_default": {
+                "hidden": true
+              }
+            }
+          }
+        }
+      },
+      "source": "%reload_ext darwin.grid.magics\n%reload_ext darwin.pivot.magics\n%reload_ext darwin.viz.magics\n%reload_ext darwin.VizDFMagic.VizDFMagic",
+      "outputs": []
+    },
+    {
+      "id": "97d8b1cb-22cc-48fa-95af-7c706220f8f5",
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "hidden": false
+      },
+      "source": "%%sql --outputtype json --numrows 1000 --noneconversion undefined\nSELECT count(*) FROM service.dsplatformtrackevent WHERE endtime > to_unixtime(cast((current_date - interval '1' month) as date)) * 1000 and resourcerequested='/queryhistory' and requestmethod='create'",
+      "outputs": []
+    }
+  ]
 }
