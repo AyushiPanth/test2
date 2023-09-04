@@ -18,16 +18,17 @@ jobs:
       with:
         python-version: 3.x
 
-    - name: Install nbdime and nbconvert
-      run: pip install nbdime nbconvert
+    - name: Install nbdime
+      run: pip install nbdime
 
     - name: Generate Jupyter Notebook Diff
-      run: |
-        nbdiff-web ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} --out temp/diff.html
-        jupyter nbconvert --to html --output-dir=temp/ temp/*.ipynb
+      run: nbdiff ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} --out=temp/diff.json
       env:
         GITHUB_BASE_REF: ${{ github.base_ref }}
         GITHUB_HEAD_REF: ${{ github.head_ref }}
+
+    - name: Convert JSON Diff to HTML
+      run: nbdiff-web temp/diff.json --out=temp/diff.html
 
     - name: Upload Jupyter Notebook HTML Diff
       uses: actions/upload-artifact@v2
