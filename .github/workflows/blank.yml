@@ -21,6 +21,9 @@ jobs:
     - name: Install nbdime
       run: pip install nbdime
 
+    - name: Create temp directory
+      run: mkdir -p temp
+
     - name: Copy Jupyter Notebook to temp directory
       run: cp test1.ipynb temp/test1.ipynb
 
