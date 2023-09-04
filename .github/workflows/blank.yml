@@ -1,14 +1,25 @@
-name: Pull Request Workflow
+name: Jupyter Notebook Diff
 
 on:
   pull_request:
-    types:
-      - opened  # Trigger the workflow when a pull request is opened
+    paths:
+      - '**.ipynb'
 
 jobs:
-  my_job:
+  jupyter-diff:
     runs-on: ubuntu-latest
 
     steps:
-    - name: diff-notebooks
-      uses: kuromt/diff-notebooks@v0.0.1
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install nbdime
+      run: pip install nbdime
+
+    - name: Generate Jupyter Notebook Diff
+      run: nbdiff-web ${{ github.base_ref }} ${{ github.head_ref }}
