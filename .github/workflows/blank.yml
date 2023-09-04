@@ -21,11 +21,17 @@ jobs:
     - name: Install nbdime
       run: pip install nbdime
 
+    - name: Debug - Print Current Directory
+      run: pwd
+
+    - name: Debug - List Files in Directory
+      run: ls -al
+
+
     - name: Generate Jupyter Notebook Diff
-      run: nbdiff ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} --out=temp/diff.json
+      run: nbdiff test1.ipynb ${{ GITHUB_BASE_REF }} --out=temp/diff.json
       env:
         GITHUB_BASE_REF: ${{ github.base_ref }}
-        GITHUB_HEAD_REF: ${{ github.head_ref }}
 
     - name: Convert JSON Diff to HTML
       run: nbdiff-web temp/diff.json --out=temp/diff.html
