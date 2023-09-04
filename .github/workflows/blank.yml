@@ -31,10 +31,13 @@ jobs:
       run: nbdiff temp/test1.ipynb temp/test1.ipynb --out=temp/diff.json
 
     - name: Convert JSON Diff to HTML
-      run: nbdiff-web temp/diff.json --out=temp/diff.html
+      run: nbdiff-web temp/diff.json
+
+    - name: Move HTML Diff to Output
+      run: mv temp/diff.html $GITHUB_WORKSPACE/diff.html
 
     - name: Upload Jupyter Notebook HTML Diff
       uses: actions/upload-artifact@v2
       with:
         name: jupyter-diff
-        path: temp/
+        path: $GITHUB_WORKSPACE/diff.html
