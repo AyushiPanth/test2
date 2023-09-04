@@ -3,7 +3,7 @@ name: Jupyter Notebook Diff
 on:
   pull_request:
     paths:
-      - '**.ipynb'
+      - 'test1.ipynb'
 
 jobs:
   jupyter-diff:
@@ -21,17 +21,8 @@ jobs:
     - name: Install nbdime
       run: pip install nbdime
 
-    - name: Debug - Print Current Directory
-      run: pwd
-
-    - name: Debug - List Files in Directory
-      run: ls -al
-
-
     - name: Generate Jupyter Notebook Diff
-      run: nbdiff test1.ipynb ${{ GITHUB_BASE_REF }} --out=temp/diff.json
-      env:
-        GITHUB_BASE_REF: ${{ github.base_ref }}
+      run: nbdiff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} --out=temp/diff.json
 
     - name: Convert JSON Diff to HTML
       run: nbdiff-web temp/diff.json --out=temp/diff.html
