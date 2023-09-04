@@ -1,19 +1,36 @@
-name: nbdime-git-diff
+name: Jupyter Notebook Diff
+
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    paths:
+      - '**.ipynb'
+
 jobs:
-  build:
+  jupyter-diff:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        fetch-depth: 0
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v3
+        python-version: 3.x
+
+    - name: Install nbdime and nbconvert
+      run: pip install nbdime nbconvert
+
+    - name: Generate Jupyter Notebook Diff
+      run: |
+        nbdiff-web ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} --out temp/diff.html
+        jupyter nbconvert --to html --output-dir=temp/ temp/*.ipynb
+      env:
+        GITHUB_BASE_REF: ${{ github.base_ref }}
+        GITHUB_HEAD_REF: ${{ github.head_ref }}
+
+    - name: Upload Jupyter Notebook HTML Diff
+      uses: actions/upload-artifact@v2
       with:
-        python-version: "3.9.13"
-    - name: nbdime-git-diff
-      uses: raybellwaves/nbdime-git-diff@0.0.6
+        name: jupyter-diff
+        path: temp/
