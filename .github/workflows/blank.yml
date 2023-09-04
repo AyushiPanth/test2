@@ -21,8 +21,11 @@ jobs:
     - name: Install nbdime
       run: pip install nbdime
 
+    - name: Copy Jupyter Notebook to temp directory
+      run: cp test1.ipynb temp/test1.ipynb
+
     - name: Generate Jupyter Notebook Diff
-      run: nbdiff $GITHUB_BASE_REF:test1.ipynb $GITHUB_HEAD_REF:test1.ipynb --out=temp/diff.json
+      run: nbdiff temp/test1.ipynb temp/test1.ipynb --out=temp/diff.json
 
     - name: Convert JSON Diff to HTML
       run: nbdiff-web temp/diff.json --out=temp/diff.html
