@@ -21,6 +21,9 @@ jobs:
     - name: Install nbdime
       run: pip install nbdime
 
+    - name: Create temp directory
+      run: mkdir -p temp
+
     - name: Generate Jupyter Notebook Diff
       run: nbdiff test1.ipynb temp/diff.json
 
