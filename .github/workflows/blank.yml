@@ -9,15 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/setup-node@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: 16
-          node-modules-cache: 'npm'
-          
+
       - uses: actions/checkout@v2
-      
+
       - name: Install nbconvert
         run: pip install nbconvert
+
+      - name: Install @actions/github module
+        run: npm install @actions/github
 
       - name: Diff notebooks
         run: |
