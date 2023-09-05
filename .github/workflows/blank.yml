@@ -43,12 +43,23 @@ jobs:
             # Generate the path for the diff.html file.
             diff_file_path=$(dirname $file)/diff.html
             nbdiff $file $file -o $diff_file_path
-      
-            # Print the path of the generated diff.html file.
-            echo "Generated $diff_file_path"
-      
-            # You can use the $diff_file_path variable to access the diff.html files locally.
           done
+
+          # Separate step to print the paths
+          - name: Print paths of generated diff.html files
+            run: |
+              # Get the hash of the head commit of the pull request.
+              head_commit=$(git rev-parse HEAD)
+          
+              # Get the changed files in the pull request.
+              changed_files=$(git diff --name-only $head_commit HEAD --)
+          
+              # Loop through the changed files and print the paths.
+              for file in $changed_files; do
+                # Generate the path for the diff.html file.
+                diff_file_path=$(dirname $file)/diff.html
+                echo "Generated $diff_file_path"
+              done
 
           
       - name: Install GitHub CLI (gh)
