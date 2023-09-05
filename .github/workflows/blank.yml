@@ -24,9 +24,11 @@ jobs:
 
       - name: Render Notebook Diff
         run: |
+          ls $GITHUB_WORKSPACE  # Debug: List contents of the workspace before generating .html files
           for notebook in $(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} | grep '\.ipynb$'); do
             nbdiff-web $GITHUB_WORKSPACE/$notebook $GITHUB_WORKSPACE/$notebook.html
           done
+          ls $GITHUB_WORKSPACE  # Debug: List contents of the workspace after generating .html files
 
       - name: Deploy GitHub Pages
         run: |
