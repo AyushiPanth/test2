@@ -49,14 +49,14 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.email "lit2019073@iiitl.ac.in"
-          git config user.name "Ayushi Panth"
           git config --global user.email "lit2019073@iiitl.ac.in"
           git config --global user.name "Ayushi Panth"
           git checkout -b gh-pages
           git add diff_files
           git commit -m "Add Jupyter Notebook diffs"
-          git push origin gh-pages
+
+      - name: Push to gh-pages branch
+        run: git push origin gh-pages
 
       - name: Set GitHub Pages URL
         id: gh-pages-url
@@ -67,7 +67,7 @@ jobs:
           # Remove the quotes from the JSON response
           repo_url=${repo_url//\"/}
       
-          # Construct the URL for the diff.html file
+          # Construct the URL for the diff_files directory
           diff_url="${repo_url}/blob/gh-pages/diff_files"
       
           echo "::set-output name=diff_url::$diff_url"
