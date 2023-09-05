@@ -1,8 +1,8 @@
-name: Generate GitHub Page for Diff
+name: Diff Jupyter Notebooks and Add Comment to Pull Request
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened]
 
 jobs:
   diff:
@@ -18,12 +18,17 @@ jobs:
           output-format: 'html'
           output-path: 'diff.html'
 
-  deploy:
+  comment:
     runs-on: ubuntu-latest
     needs: diff
     steps:
-      - uses: actions/github-pages@v2
-          with:
-            page_name: diff
-            branch: gh-pages
-            source_directory: diff.html
+      - uses: actions/github-script@v2
+        with:
+          script: |
+            const github = require('@actions/github');
+            const { pull_request } = github.context;
+            const url = `https://${pull_request.head.repo.AyushiPanth}.github.io/diff`;
+            github.issues.comment({
+              issue_number: pull_request.number,
+              body: `The diff of the Jupyter notebooks can be found here: ${url}`,
+            });
