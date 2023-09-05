@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Install nbdime
-        run: sudo apt install nbdime
+        run: pip install nbdime
         
       - name: Diff notebooks
         run: nbdime . -f --output-format html --output-path diff.html
