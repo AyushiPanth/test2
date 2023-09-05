@@ -1,43 +1,27 @@
-name: Jupyter Notebook Diff
-
+name: Render Changed Notebooks
 on:
   pull_request:
     paths:
-      - 'test1.ipynb'
+      - '**/*.ipynb'  # Match all .ipynb files in any directory
 
 jobs:
-  jupyter-diff:
+  render_notebooks:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
-
-    - name: Install nbdime
-      run: pip install nbdime
-
-    - name: Create temp directory
-      run: mkdir -p temp
-
-    - name: Copy Jupyter Notebook to temp directory
-      run: cp test1.ipynb temp/test1.ipynb
-
-    - name: Generate Jupyter Notebook Diff
-      run: nbdiff temp/test1.ipynb temp/test1.ipynb --out=temp/diff.json
-
-    - name: Convert JSON Diff to HTML
-      run: nbdiff-web temp/diff.json --out=temp/diff.html
-
-    - name: Move HTML Diff to workspace
-      run: mv temp/diff.html $GITHUB_WORKSPACE/diff.html
-
-    - name: Upload Jupyter Notebook HTML Diff
-      uses: actions/upload-artifact@v2
-      with:
-        name: jupyter-diff
-        path: $GITHUB_WORKSPACE/diff.html
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # Use your preferred Python version.
+          
+      - name: Install Dependencies
+        run: |
+          pip install nbconvert nbdime
+        
+      - name: Render Changed Notebooks
+        run: |
+          for notebook in $(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} | grep '\.ipynb$'); do
+            nbdiff-web $GITHUB_WORKSPACE/$notebook $GITHUB_WORKSPACE/$notebook.html
+          done
