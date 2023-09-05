@@ -43,9 +43,9 @@ jobs:
           for file in $changed_files; do
             nbdiff-web $file $file --output diff_files/$(basename $file).html
 
-           git add diff_files
-           git commit -m "Add Jupyter Notebook diffs"
-           git push origin gh-pages
+          git add diff_files
+          git commit -m "Add Jupyter Notebook diffs"
+          git push origin gh-pages
           done
 
       - name: Set GitHub Pages URL
