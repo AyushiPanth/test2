@@ -56,7 +56,7 @@ jobs:
       - name: Get Repository URL
         id: repo_url
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Get the repository URL using the GitHub API
           repo_url=$(gh repo view --json url -q .url)
