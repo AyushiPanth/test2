@@ -1,27 +1,48 @@
-name: Render Changed Notebooks
+name: Render and Publish Notebook Diff
+
 on:
   pull_request:
     paths:
       - '**/*.ipynb'  # Match all .ipynb files in any directory
 
 jobs:
-  render_notebooks:
+  render_and_publish_diff:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'  # Use your preferred Python version.
-          
+
       - name: Install Dependencies
         run: |
           pip install nbconvert nbdime
-        
-      - name: Render Changed Notebooks
+
+      - name: Render Notebook Diff
         run: |
           for notebook in $(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} | grep '\.ipynb$'); do
             nbdiff-web $GITHUB_WORKSPACE/$notebook $GITHUB_WORKSPACE/$notebook.html
           done
+
+      - name: Deploy GitHub Pages
+        run: |
+          # Create and push to a gh-pages branch
+          # You'll need to replace USERNAME and REPO with your GitHub username and repository name.
+          git checkout -b gh-pages
+          mv *.html docs/  # Move HTML files to a "docs" directory for GitHub Pages
+          git add docs/
+          git commit -m "Publish notebook diff"
+          git push origin gh-pages
+
+      - name: Comment on Pull Request
+        run: |
+          # Use a GitHub token with appropriate permissions
+          # Replace YOUR_TOKEN with your GitHub token secret name
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -d "{\"body\": \"You can view the notebook diff [here](https://USERNAME.github.io/REPO/notebook.html)\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
