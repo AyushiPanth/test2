@@ -1,4 +1,4 @@
-name: Diff Jupyter Notebooks and Add Comment to Pull Request
+name: Diff Jupyter Notebooks and Create GitHub Pages Site
 
 on:
   pull_request:
@@ -9,14 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install nbdime
-        run: pip install nbdime
-      - name: Diff notebooks
-        uses: jupyter/nbdime-action@v1.0.0
+      - uses: actions/github-pages@v2
         with:
-          files: '**/*.ipynb'
-          output-format: 'html'
-          output-path: 'diff.html'
+          branch: gh-pages
+          publishDir: .github/pages
 
   comment:
     runs-on: ubuntu-latest
@@ -27,7 +23,7 @@ jobs:
           script: |
             const github = require('@actions/github');
             const { pull_request } = github.context;
-            const url = `https://${pull_request.head.repo.AyushiPanth}.github.io/diff`;
+            const url = `https://${pull_request.head.repo.AyushiPanth}.github.io/`;
             github.issues.comment({
               issue_number: pull_request.number,
               body: `The diff of the Jupyter notebooks can be found here: ${url}`,
