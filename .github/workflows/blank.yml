@@ -28,35 +28,25 @@ jobs:
 
       - name: Diff notebooks
         run: |
+          git config --global user.email "lit2019073@iiitl.ac.in"
+          git config --global user.name "Ayushi Panth"
           # Get the hash of the head commit of the pull request.
           head_commit=$(git rev-parse HEAD)
       
           # Get the changed files in the pull request.
           changed_files=$(git diff --name-only $head_commit HEAD --)
-      
-          # Create a directory to store diff HTML files.
+          git checkout -b gh-pages
+          # Create a directory to   store diff HTML files.
           mkdir -p diff_files
       
           # Diff the changed Jupyter notebooks and save HTML diffs.
           for file in $changed_files; do
             nbdiff-web $file $file --output diff_files/$(basename $file).html
+
+           git add diff_files
+           git commit -m "Add Jupyter Notebook diffs"
+           git push origin gh-pages
           done
-
-      - name: Set up Git user identity
-        run: |
-          git config --global user.email "lit2019073@iiitl.ac.in"
-          git config --global user.name "Ayushi Panth"
-
-      - name: Configure Git
-        run: |
-          git config --global user.email "lit2019073@iiitl.ac.in"
-          git config --global user.name "Ayushi Panth"
-          git checkout -b gh-pages
-          git add diff_files
-          git commit -m "Add Jupyter Notebook diffs"
-
-      - name: Push to gh-pages branch
-        run: git push origin gh-pages
 
       - name: Set GitHub Pages URL
         id: gh-pages-url
