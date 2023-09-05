@@ -40,6 +40,6 @@ jobs:
             body: `The diff of the Jupyter notebooks can be found here: ${url}`,
           });
           github-token: ***
-          debug: false
+          debug: true
           user-agent: actions/github-script
           result-encoding: json
