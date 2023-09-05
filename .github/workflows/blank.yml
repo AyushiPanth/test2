@@ -41,7 +41,10 @@ jobs:
 
             # Print the path of the generated diff.html file.
             echo "Generated $diff_file_path"
+            git add $diff_file_path
           done
+          git commit -m "Add generated diff.html files"
+          git push
 
           
       - name: Install GitHub CLI (gh)
