@@ -1,67 +1,19 @@
-name: Diff Jupyter Notebooks and Create GitHub Pages Site
-
+name: nbdime-git-diff
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
-    types: [opened]
-
+    branches: [ "main" ]
 jobs:
-  diff:
+  build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{github.workspace}} # Set the working directory for the entire job
-    
     steps:
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - uses: actions/checkout@v2
-
-      - name: Install nbconvert
-        run: pip install nbconvert
-
-      - name: Install nbdime
-        run: pip install nbdime
-
-      - name: Diff notebooks
-        run: |
-          git config --global user.email "lit2019073@iiitl.ac.in"
-          git config --global user.name "Ayushi Panth"
-          # Get the hash of the head commit of the pull request.
-          head_commit=$(git rev-parse HEAD)
-      
-          # Get the changed files in the pull request.
-          changed_files=$(git diff --name-only $head_commit HEAD --)
-          git checkout -b gh-pages
-          # Create a directory to   store diff HTML files.
-          mkdir -p diff_files
-      
-          # Diff the changed Jupyter notebooks and save HTML diffs.
-          for file in $changed_files; do
-            nbdiff-web $file $file --output diff_files/$(basename $file).html
-
-          git add diff_files
-          git commit -m "Add Jupyter Notebook diffs"
-          git push origin gh-pages
-          done
-
-      - name: Get GitHub Pages URL
-        id: gh-pages-url
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          gh repo view --json url -q .url
-        shell: bash
-      
-      - name: Create Comment
-        run: |
-          # Get the dynamically generated GitHub Pages URL from the previous step's output
-          gh_pages_url="${{ steps.gh-pages-url.outputs.stdout }}"
-      
-          # Create a comment with the dynamically generated GitHub Pages URL
-          gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $gh_pages_url"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.9.13"
+    - name: nbdime-git-diff
+      uses: raybellwaves/nbdime-git-diff@0.0.6
