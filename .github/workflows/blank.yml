@@ -46,6 +46,7 @@ jobs:
               body: `The diff of the Jupyter notebooks can be found here: ${url}`,
             });
           github-token: ${{secrets.GITHUB_TOKEN}}
+          NODE_MODULES_CACHE: 1000000
           debug: false
           user-agent: actions/github-script
           result-encoding: json
