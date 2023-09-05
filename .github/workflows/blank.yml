@@ -23,13 +23,9 @@ jobs:
       - name: Install nbconvert
         run: pip install nbconvert
 
-      - name: Install @actions/github module
-        run: npm install -g @actions/github
+      - name: Install nbdime
+        run: pip install nbdime
 
-      - name: Set up Git user identity
-        run: |
-          git config --global user.email "lit2019073@iiitl.ac.in"
-          git config --global user.name "Ayushi Panth"
       - name: Diff notebooks
         run: |
           # Get the hash of the head commit of the pull request.
@@ -38,25 +34,32 @@ jobs:
           # Get the changed files in the pull request.
           changed_files=$(git diff --name-only $head_commit HEAD --)
       
-          # Loop through the changed files.
+          # Create a directory to store diff HTML files.
+          mkdir -p diff_files
+      
+          # Diff the changed Jupyter notebooks and save HTML diffs.
           for file in $changed_files; do
-            # Generate the path for the diff.html file.
-            diff_file_path=$(dirname $file)/diff.html
-            nbdiff $file $file -o $diff_file_path
-          done       
+            nbdiff-web $file $file --output diff_files/$(basename $file).html
+          done
 
-          
-      - name: Install GitHub CLI (gh)
+      - name: Set up Git user identity
         run: |
-          curl -sSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg arch=all] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt-get update
-          sudo apt-get install gh
+          git config --global user.email "lit2019073@iiitl.ac.in"
+          git config --global user.name "Ayushi Panth"
 
-      - name: Get Repository URL
-        id: repo_url
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Configure Git
+        run: |
+          git config user.email "lit2019073@iiitl.ac.in"
+          git config user.name "Ayushi Panth"
+          git config --global user.email "lit2019073@iiitl.ac.in"
+          git config --global user.name "Ayushi Panth"
+          git checkout -b gh-pages
+          git add diff_files
+          git commit -m "Add Jupyter Notebook diffs"
+          git push origin gh-pages
+
+      - name: Set GitHub Pages URL
+        id: gh-pages-url
         run: |
           # Get the repository URL using the GitHub API
           repo_url=$(gh repo view --json url -q .url)
@@ -64,11 +67,8 @@ jobs:
           # Remove the quotes from the JSON response
           repo_url=${repo_url//\"/}
       
-          # Extract the directory containing the changed file
-          directory=$(dirname "${changed_files}")
-      
           # Construct the URL for the diff.html file
-          diff_url="${repo_url}/blob/main/${directory}/diff.html"
+          diff_url="${repo_url}/blob/gh-pages/diff_files"
       
           echo "::set-output name=diff_url::$diff_url"
         shell: bash
@@ -76,7 +76,7 @@ jobs:
       - name: Create Comment
         run: |
           # Get the dynamically generated diff URL from the previous step's output
-          diff_url="${{ steps.repo_url.outputs.diff_url }}"
+          diff_url="${{ steps.gh-pages-url.outputs.diff_url }}"
       
           # Create a comment with the dynamically generated diff URL
           gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $diff_url"
