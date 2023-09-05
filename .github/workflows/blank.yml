@@ -14,7 +14,7 @@ jobs:
         run: pip install nbdime
         
       - name: Diff notebooks
-        run: nbdime . -f --output-format html --output-path diff.html
+        run: nbdime -f --output-format html --output-path diff.html
 
   comment:
     runs-on: ubuntu-latest
