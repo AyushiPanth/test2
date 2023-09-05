@@ -64,8 +64,11 @@ jobs:
           # Remove the quotes from the JSON response
           repo_url=${repo_url//\"/}
       
+          # Extract the directory containing the changed file
+          directory=$(dirname "${changed_files}")
+      
           # Construct the URL for the diff.html file
-          diff_url="${repo_url}/blob/main/$(dirname $changed_files)/diff.html"
+          diff_url="${repo_url}/blob/main/${directory}/diff.html"
       
           echo "::set-output name=diff_url::$diff_url"
         shell: bash
