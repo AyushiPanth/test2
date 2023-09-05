@@ -12,7 +12,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-          
+
+      - run: npm install @actions/github
+      
       - uses: actions/checkout@v2
 
       - name: Install nbconvert
