@@ -9,7 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      
+      - name: Install nbdime
+        run: sudo apt install nbdime
+        
       - name: Diff notebooks
         run: nbdime . -f --output-format html --output-path diff.html
 
@@ -22,7 +25,7 @@ jobs:
           script: |
             const github = require('@actions/github');
             const { pull_request } = github.context;
-            const url = `https://${pull_request.head.repo.full_name}.github.io/diff.html`;
+            const url = `https://${pull_request.head.repo.AyushiPanth}.github.io/diff.html`;
             github.issues.comment({
               issue_number: pull_request.number,
               body: `The diff of the Jupyter notebooks can be found here: ${url}`,
