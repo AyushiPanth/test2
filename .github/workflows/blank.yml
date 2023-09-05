@@ -44,5 +44,5 @@ jobs:
           # Replace YOUR_TOKEN with your GitHub token secret name
           curl -X POST \
             -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-            -d "{\"body\": \"You can view the notebook diff [here](https://USERNAME.github.io/REPO/notebook.html)\"}" \
+            -d "{\"body\": \"You can view the notebook diff [here](https://AyushiPanth.github.io/test1/notebook.html)\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
