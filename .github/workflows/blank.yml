@@ -50,6 +50,8 @@ jobs:
 
       - name: Set GitHub Pages URL
         id: gh-pages-url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Get the repository URL using the GitHub API
           repo_url=$(gh repo view --json url -q .url)
