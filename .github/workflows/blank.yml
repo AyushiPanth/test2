@@ -36,8 +36,13 @@ jobs:
 
           # Diff the changed Jupyter notebooks.
           for file in $changed_files; do
-            nbdiff $file $file -o diff.html
+            diff_file_path=$(dirname $file)/diff.html
+            nbdiff $file $file -o $diff_file_path
+
+            # Print the path of the generated diff.html file.
+            echo "Generated $diff_file_path"
           done
+
           
       - name: Install GitHub CLI (gh)
         run: |
@@ -48,8 +53,8 @@ jobs:
 
       - name: Create Comment
         run: |
-          # Create a comment on the pull request with a link to the diff file
-          diff_url="https://${{ github.repository }}/diff.html"
+          # Replace with the correct URL to your diff file
+          diff_url="https://ayushipanth.github.io/test1/path/to/diff.html"
           gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $diff_url"
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
