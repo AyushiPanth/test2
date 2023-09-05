@@ -53,7 +53,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh repo view --json html_url -q .html_url
+          gh repo view --json url -q .url
         shell: bash
       
       - name: Create Comment
