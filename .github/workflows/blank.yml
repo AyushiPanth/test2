@@ -15,8 +15,11 @@ jobs:
 
       - name: Diff notebooks
         run: |
+          # Get the hash of the head commit of the pull request.
+          head_commit=$(git rev-parse HEAD)
+
           # Get the changed files in the pull request.
-          changed_files=$(git diff --name-only HEAD~1 HEAD --)
+          changed_files=$(git diff --name-only $head_commit HEAD --)
 
           # Diff the changed Jupyter notebooks.
           for file in $changed_files; do
