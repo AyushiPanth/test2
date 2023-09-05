@@ -38,22 +38,18 @@ jobs:
           for file in $changed_files; do
             nbdiff $file $file -o diff.html
           done
+          
+      - name: Install GitHub CLI (gh)
+        run: |
+          curl -sSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg arch=all] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install gh
 
-  comment:
-    runs-on: ubuntu-latest
-    needs: diff
-    steps:
-      - uses: actions/github-script@v2
-        with:
-          script: |
-            const mygithub = require('@actions/github');
-            const { pull_request } = mygithub.context;
-            const url = `https://${pull_request.head.repo.full_name}.github.io/diff.html`;
-            mygithub.issues.comment({
-              issue_number: pull_request.number,
-              body: `The diff of the Jupyter notebooks can be found here: ${url}`,
-            });
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          debug: false
-          user-agent: actions/github-script
-          result-encoding: json
+      - name: Create Comment
+        run: |
+          # Create a comment on the pull request with a link to the diff file
+          diff_url="https://${{ github.repository }}/diff.html"
+          gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $diff_url"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
