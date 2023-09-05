@@ -57,4 +57,4 @@ jobs:
           diff_url="https://ayushipanth.github.io/test1/path/to/diff.html"
           gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $diff_url"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
