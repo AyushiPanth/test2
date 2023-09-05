@@ -48,29 +48,18 @@ jobs:
           git push origin gh-pages
           done
 
-      - name: Set GitHub Pages URL
+      - name: Get GitHub Pages URL
         id: gh-pages-url
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # Get the repository URL using the GitHub API
-          repo_url=$(gh repo view --json url -q .url)
-      
-          # Remove the quotes from the JSON response
-          repo_url=${repo_url//\"/}
-      
-          # Construct the URL for the diff_files directory
-          diff_url="${repo_url}/blob/gh-pages/diff_files"
-      
-          echo "::set-output name=diff_url::$diff_url"
+          gh repo view --json html_url -q .html_url
         shell: bash
       
       - name: Create Comment
         run: |
-          # Get the dynamically generated diff URL from the previous step's output
-          diff_url="${{ steps.gh-pages-url.outputs.diff_url }}"
+          # Get the dynamically generated GitHub Pages URL from the previous step's output
+          gh_pages_url="${{ steps.gh-pages-url.outputs.stdout }}"
       
-          # Create a comment with the dynamically generated diff URL
-          gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $diff_url"
+          # Create a comment with the dynamically generated GitHub Pages URL
+          gh issue comment ${{ github.event.pull_request.number }} -b "The diff of the Jupyter notebooks can be found here: $gh_pages_url"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
