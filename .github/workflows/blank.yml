@@ -40,7 +40,8 @@ jobs:
               issue_number: pull_request.number,
               body: `The diff of the Jupyter notebooks can be found here: ${url}`,
             });
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            secrets:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           debug: false
           user-agent: actions/github-script
           result-encoding: json
