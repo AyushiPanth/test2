@@ -26,6 +26,10 @@ jobs:
       - name: Install @actions/github module
         run: npm install -g @actions/github
 
+      - name: Set up Git user identity
+        run: |
+          git config --global user.email "lit2019073@iiitl.ac.in"
+          git config --global user.name "Ayushi Panth"
       - name: Diff notebooks
         run: |
           # Get the hash of the head commit of the pull request.
